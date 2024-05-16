@@ -62,7 +62,8 @@
           })
         });
         const data = await response.json();
-        document.getElementById('apiResponse').innerText = JSON.stringify(data, null, 2);
+        //console.log(data.choices[0].message.content);
+        document.getElementById('apiResponse').innerText = data.choices[0].message.content
       } catch (error) {
         console.error('Error submitting text:', error);
         document.getElementById('apiResponse').innerText = 'Error submitting text';
