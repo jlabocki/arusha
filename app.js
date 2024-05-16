@@ -1,11 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
+const {join} = require("node:path");
 
 const app = express();
 const port = 8080;
 
 app.use(bodyParser.json());
+app.use(express.static(join(__dirname, 'public')));
 
 // Serve the HTML page
 app.get('/', (req, res) => {
