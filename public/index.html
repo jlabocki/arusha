@@ -11,7 +11,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" href="#">
-    <img src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" width="30" height="30" alt="">
+    <img src="arusha.svg" width="64" height="64" alt="">
     API EXAMPLE
   </a>
 </nav>
@@ -20,7 +20,7 @@
   <form id="apiForm">
     <div class="mb-3">
       <label for="textInput" class="form-label">Enter Text</label>
-      <input type="text" class="form-control" id="textInput" placeholder="e.g Where is the gateway to Safari?">
+      <input type="text" class="form-control" id="textInput" name="textInput" placeholder="e.g Where is the gateway to Safari?">
     </div>
     <div class="col-auto">
       <button type="submit" class="btn btn-primary mb-3">Submit</button>
@@ -37,10 +37,11 @@
 
   <script>
     document.getElementById('apiForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
+      event.preventDefault(); // Prevent the default form submission
 
-      const formData = new FormData(this);
-      const textInput = formData.get('textInput');
+      // Create a FormData object from the form
+      const form = event.target;
+      const formData = new FormData(form);
 
       try {
         const response = await fetch('/submit-text', {
@@ -55,14 +56,15 @@
                 "role": "system"
               },
               {
-                "content": "what is the capital of france?",
+                "content": formData.get('textInput'),
                 "role": "user"
               }
             ]
           })
         });
         const data = await response.json();
-        document.getElementById('apiResponse').innerText = JSON.stringify(data, null, 2);
+        //console.log(data.choices[0].message.content);
+        document.getElementById('apiResponse').innerText = data.choices[0].message.content
       } catch (error) {
         console.error('Error submitting text:', error);
         document.getElementById('apiResponse').innerText = 'Error submitting text';

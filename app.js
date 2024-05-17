@@ -1,11 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
+const {join} = require("node:path");
 
 const app = express();
 const port = 8080;
 
 app.use(bodyParser.json());
+app.use(express.static(join(__dirname, 'public')));
 
 // Serve the HTML page
 app.get('/', (req, res) => {
@@ -33,16 +35,14 @@ app.post('/submit-text', async (req, res) => {
       redirect: 'follow'
     });
     const data = await response.json();
-    const content = findContentField(data);
+    if (data.choices && data.choices.length > 0 && data.choices[0].message) {
+      // Log the message object for debugging
+      console.dir(data.choices[0].message, { depth: null });
+    } else {
+      console.log('No message found in the API response');
+    }
 
-    if (response.choices && response.choices.length > 0 && response.choices[0].message) {
-        // Log the message object for debugging
-        console.dir(response.choices[0].message, { depth: null });
-      } else {
-        console.log('No message found in the API response');
-      }
-
-    res.send(content);
+    res.send(data);
   } catch (error) {
     console.error('Error processing text:', error);
     res.status(500).send('Error processing text');
@@ -53,23 +53,3 @@ app.post('/submit-text', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
-
-
-function findContentField(json) {
-  // Check if the current object has a 'content' field of type string
-  if (json.hasOwnProperty('content') && typeof json['content'] === 'string') {
-    return json['content'];
-  }
-
-  // Recursively search through the object's properties
-  for (const key in json) {
-    if (json.hasOwnProperty(key) && typeof json[key] === 'object' && json[key] !== null) {
-      const result = findContentField(json[key]);
-      if (result !== null) {
-        return result;
-      }
-    }
-  }
-
-  return null;
-}
