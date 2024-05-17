@@ -31,7 +31,7 @@ app.post('/submit-text', async (req, res) => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ messages }),
       redirect: 'follow'
     });
     const data = await response.json();
